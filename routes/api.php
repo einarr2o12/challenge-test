@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('mpt/invoice-amount', [InternetServiceProviderController::class, 'getMptInvoiceAmount']);
     Route::post('ooredoo/invoice-amount', [InternetServiceProviderController::class, 'getOoredooInvoiceAmount']);
     
-    Route::post('job/apply', [JobController::class, 'apply']);
+    Route::post('job/apply', JobController::class);
     
-    Route::post('staff/salary', [StaffController::class, 'payroll']);
+    Route::post('staff/salary', StaffController::class);
 });

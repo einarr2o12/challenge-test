@@ -2,59 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Repositories\UserRepositoryInterface;
+use App\Http\Requests\LoginRequest;
+use App\Http\Resources\LoginResource;
+use App\Traits\ResponserTraits;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    use ResponserTraits;
+
+    /**
+     * @var UserRepositoryInterface $userRepository;
+     */
+    protected UserRepositoryInterface $userRepository;
+
+    public function __construct(UserRepositoryInterface $userRepository)
     {
-        if (!$request->email) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'email is required'
-            ]);
-        }
-        
-        if(strlen($request->email) < 6) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'email is invalid'
-            ]);
-        }
-    
-        if (!$request->password) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'password is required'
-            ]);
-        }
-        if(strlen($request->password) < 8) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'password is invalid'
-            ]);
-        }
-    
-        $user = User::where('email', $request->email)->first();
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * Retrive to user login.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function login(LoginRequest $request)
+    {
+        $user = $this->userRepository->getUserByEmail($request->email);
         if (!$user) {
-            return response()->json([
-                'status'  => 404,
-                'message' => 'Model not found.'
-            ]);
+            return $this->responseNotFound('Model not found.');
         }
-    
+
         if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'status'  => 404,
-                'message' => 'Invalid credentials'
-            ]);
+            return $this->responseNotFound('Invalid credentials');
         }
-        
-        return response()->json([
-            'user' => $user,
-            'token' => $user->createToken('User-Token')->plainTextToken
-        ]);
+        return $this->responseSuccess(new LoginResource($user));
     }
 }

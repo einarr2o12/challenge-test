@@ -2,24 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\JobResource;
 use App\Services\EmployeeManagement\Applicant;
-use Illuminate\Http\Request;
+use App\Traits\ResponserTraits;
 
 class JobController extends Controller
 {
-    protected $applicant;
-    
-    public function __construct(Applicant $applicant)
+    use ResponserTraits;
+    public function __invoke(Applicant $applicant)
     {
-        $this->applicant = $applicant;
-    }
-    
-    public function apply(Request $request)
-    {
-        $data = $this->applicant->applyJob();
-        
-        return response()->json([
-            'data' => $data
-        ]);
+        $data = $applicant->applyJob();
+
+        return $this->responseSuccess(new JobResource($data));
     }
 }

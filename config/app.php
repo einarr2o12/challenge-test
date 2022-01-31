@@ -1,5 +1,9 @@
 <?php
 
+use App\Providers\BindLikeServiceProvider;
+use App\Providers\BindPostServiceProvider;
+use App\Providers\BindUserServiceProvider;
+
 return [
 
     /*
@@ -161,6 +165,9 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        BindUserServiceProvider::class,
+        BindPostServiceProvider::class,
+        BindLikeServiceProvider::class,
 
         /*
          * Package Service Providers...

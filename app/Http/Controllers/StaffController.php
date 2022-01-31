@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StaffResource;
 use App\Services\EmployeeManagement\Staff;
-use Illuminate\Http\Request;
+use App\Traits\ResponserTraits;
 
 class StaffController extends Controller
 {
-    protected $staff;
-    
-    public function __construct(Staff $staff)
+    use ResponserTraits;
+
+    public function __invoke(Staff $staff)
     {
-        $this->staff = $staff;
-    }
-    
-    public function payroll()
-    {
-        $data = $this->staff->salary();
-    
-        return response()->json([
-            'data' => $data
-        ]);
+        $data = $staff->salary();
+
+        return $this->responseSuccess(new StaffResource($data));
     }
 }
